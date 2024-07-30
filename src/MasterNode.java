@@ -94,8 +94,17 @@ public class MasterNode {
                 this.startChain("Chain Start");
                 break;
             default:
-                System.err.println("(Master) Invalid command. Use 'ping', 'broadcast', or 'chain'.");
+                System.err.println("(Master) Invalid command");
                 System.exit(1);
+        }
+
+        // Termination
+        executor.close();
+        for (String key : workerAddresses.keySet()) {
+            JSONObject json = new JSONObject();
+            json.put("type", "EXIT");
+            json.put("message", "");
+            sendResponse(json.toString(), workerAddresses.get(key),workerPort.get(key));
         }
     }
 

@@ -73,6 +73,9 @@ public class WorkerNode {
             case "CHAIN":
                 handleChainMessage(json, socket, address, port);
                 break;
+            case "EXIT":
+                running = false;
+                break;
         }
     }
 

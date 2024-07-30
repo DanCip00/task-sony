@@ -4,10 +4,11 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="931fa6eb-ea23-4131-9aaf-1b3437d006a5" name="Changes" comment="working system">
+    <list default="true" id="931fa6eb-ea23-4131-9aaf-1b3437d006a5" name="Changes" comment="Better output">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/Main.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/Main.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/MasterNode.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/MasterNode.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Message.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/Message.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/WorkerHandler.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/WorkerHandler.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/WorkerNode.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/WorkerNode.java" afterDir="false" />
     </list>
@@ -140,7 +141,7 @@
       <option name="presentableId" value="Default" />
       <updated>1722281010998</updated>
       <workItem from="1722281012007" duration="8515000" />
-      <workItem from="1722326376776" duration="11717000" />
+      <workItem from="1722326376776" duration="13395000" />
     </task>
     <task id="LOCAL-00001" summary="Init - bag close connection">
       <option name="closed" value="true" />
@@ -166,7 +167,15 @@
       <option name="project" value="LOCAL" />
       <updated>1722334601362</updated>
     </task>
-    <option name="localTasksCounter" value="4" />
+    <task id="LOCAL-00004" summary="Better output">
+      <option name="closed" value="true" />
+      <created>1722339648233</created>
+      <option name="number" value="00004" />
+      <option name="presentableId" value="LOCAL-00004" />
+      <option name="project" value="LOCAL" />
+      <updated>1722339648233</updated>
+    </task>
+    <option name="localTasksCounter" value="5" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -187,6 +196,18 @@
     <MESSAGE value="Init - bag close connection" />
     <MESSAGE value="working ping" />
     <MESSAGE value="working system" />
-    <option name="LAST_COMMIT_MESSAGE" value="working system" />
+    <MESSAGE value="Better output" />
+    <option name="LAST_COMMIT_MESSAGE" value="Better output" />
+  </component>
+  <component name="XDebuggerManager">
+    <breakpoint-manager>
+      <breakpoints>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/Main.java</url>
+          <line>49</line>
+          <option name="timeStamp" value="9" />
+        </line-breakpoint>
+      </breakpoints>
+    </breakpoint-manager>
   </component>
 </project>

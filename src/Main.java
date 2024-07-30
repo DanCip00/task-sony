@@ -1,10 +1,13 @@
 import java.io.IOException;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
+import java.util.ArrayList;
+import java.util.List;
 
 public class Main {
     public static void main(String[] args) throws InterruptedException {
 
+        List<Thread> workerThreads = new ArrayList<>();
         int masterPort = 12346;
         long delayMillis = 500;
         int pingPongTimes = 10;
@@ -37,7 +40,18 @@ public class Main {
                 }
                 workerNode.start();
             });
+            workerThreads.add(workerThread);
             workerThread.start();
+        }
+
+        // join
+        try {
+            for (Thread workerThread : workerThreads) {
+                workerThread.join();
+            }
+            masterThread.join();
+        } catch (InterruptedException e) {
+            System.err.println(e.getMessage());
         }
     }
 }
