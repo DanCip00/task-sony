@@ -4,11 +4,14 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="931fa6eb-ea23-4131-9aaf-1b3437d006a5" name="Changes" comment="Better output">
+    <list default="true" id="931fa6eb-ea23-4131-9aaf-1b3437d006a5" name="Changes" comment="Termination function">
+      <change afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/media/chain.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/media/ping.png" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/Main.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/Main.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/MasterNode.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/MasterNode.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Message.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/Message.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Message.java" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/src/WorkerHandler.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/WorkerHandler.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/WorkerNode.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/WorkerNode.java" afterDir="false" />
     </list>
@@ -78,6 +81,12 @@
     "vue.rearranger.settings.migration": "true"
   }
 }]]></component>
+  <component name="RecentsManager">
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/media" />
+      <recent name="$PROJECT_DIR$" />
+    </key>
+  </component>
   <component name="RunManager" selected="Application.Main">
     <configuration name="Main" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
       <option name="MAIN_CLASS_NAME" value="Main" />
@@ -141,7 +150,7 @@
       <option name="presentableId" value="Default" />
       <updated>1722281010998</updated>
       <workItem from="1722281012007" duration="8515000" />
-      <workItem from="1722326376776" duration="13395000" />
+      <workItem from="1722326376776" duration="15698000" />
     </task>
     <task id="LOCAL-00001" summary="Init - bag close connection">
       <option name="closed" value="true" />
@@ -175,7 +184,15 @@
       <option name="project" value="LOCAL" />
       <updated>1722339648233</updated>
     </task>
-    <option name="localTasksCounter" value="5" />
+    <task id="LOCAL-00005" summary="Termination function">
+      <option name="closed" value="true" />
+      <created>1722341198270</created>
+      <option name="number" value="00005" />
+      <option name="presentableId" value="LOCAL-00005" />
+      <option name="project" value="LOCAL" />
+      <updated>1722341198270</updated>
+    </task>
+    <option name="localTasksCounter" value="6" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -197,17 +214,7 @@
     <MESSAGE value="working ping" />
     <MESSAGE value="working system" />
     <MESSAGE value="Better output" />
-    <option name="LAST_COMMIT_MESSAGE" value="Better output" />
-  </component>
-  <component name="XDebuggerManager">
-    <breakpoint-manager>
-      <breakpoints>
-        <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/src/Main.java</url>
-          <line>49</line>
-          <option name="timeStamp" value="9" />
-        </line-breakpoint>
-      </breakpoints>
-    </breakpoint-manager>
+    <MESSAGE value="Termination function" />
+    <option name="LAST_COMMIT_MESSAGE" value="Termination function" />
   </component>
 </project>

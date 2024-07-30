@@ -55,7 +55,7 @@ public class MasterNode {
     /**
      * Given a number of Workers, wait until all workers have sent a message. It also create a socket that listen
      * in the given port.
-     * @param numberOfWorkers
+     * @param numberOfWorkers - number of workers to wait
      * @throws SocketException
      * @throws IOException
      */
@@ -79,6 +79,10 @@ public class MasterNode {
     }
 
 
+    /**
+     * MasterNode execution function. Automatically terminates after 2000 ms without messages
+     * @throws InterruptedException
+     */
     public void start() throws InterruptedException {
         switch (this.command.toLowerCase()) {
             case "ping":
@@ -108,6 +112,10 @@ public class MasterNode {
         }
     }
 
+    /**
+     * Function dedicated to Ping operation
+     * @throws InterruptedException
+     */
     public void sendPing() throws InterruptedException {
 
         for (int i = 0; i < pingPongTimes; i++) {
@@ -122,6 +130,10 @@ public class MasterNode {
         }
     }
 
+    /**
+     * Function dedicated to send a single broadcast message
+     * @param message
+     */
     public void sendBroadcast(String message) {
         for (String key : workerAddresses.keySet()) {
             JSONObject json = new JSONObject();
@@ -131,6 +143,10 @@ public class MasterNode {
         }
     }
 
+    /**
+     * Function dedicated to Chain message
+     * @param initialMessage
+     */
     public void startChain(String initialMessage) {
         if (!workerAddresses.isEmpty()) {
             String firstWorker = workerAddresses.keySet().iterator().next();
@@ -143,6 +159,10 @@ public class MasterNode {
         }
     }
 
+    /**
+     * Private utility function to obtain workers list
+     * @return
+     */
     private JSONObject getWorkersList() {
         JSONObject workersList = new JSONObject();
         int i = 0;
@@ -156,6 +176,12 @@ public class MasterNode {
         return workersList;
     }
 
+    /**
+     * Private utility function to send UDP messages
+     * @param response
+     * @param address
+     * @param port
+     */
     private void sendResponse(String response, InetAddress address, int port) {
         byte[] buf = response.getBytes();
         DatagramPacket packet = new DatagramPacket(buf, buf.length, address, port);

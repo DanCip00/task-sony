@@ -9,6 +9,11 @@ public class WorkerNode {
     private final String name ;
     private volatile boolean running = true;
 
+    /**
+     * Static function for the creation of workers
+     * @param args - <master address> <master port>
+     * @throws IOException
+     */
     public static void main(String[] args) throws IOException {
         if (args.length < 2) {
             System.err.println("Usage: java WorkerNode <master address> <master port>");

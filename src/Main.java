@@ -10,9 +10,17 @@ public class Main {
         List<Thread> workerThreads = new ArrayList<>();
         int masterPort = 12346;
         long delayMillis = 500;
-        int pingPongTimes = 10;
-        int numberOfWorkers = 10;
-        String command = "chain";
+        int pingPongTimes = 2;
+        int numberOfWorkers = 4;
+        String command = "chain"; // chain|ping|broadcast
+
+        System.out.println("Using values:");
+        System.out.println("Master Port: " + masterPort);
+        System.out.println("Delay (ms): " + delayMillis);
+        System.out.println("PingPong Times: " + pingPongTimes);
+        System.out.println("Number of Workers: " + numberOfWorkers);
+        System.out.println("Command: " + command);
+
 
         // Start the MasterNode
         MasterNode masterNode = new MasterNode(delayMillis, pingPongTimes, command, masterPort);
@@ -30,7 +38,7 @@ public class Main {
         // Start WorkerNodes
         for (int i = 0; i < numberOfWorkers; i++) {
 
-            String name = "Worker n°" + String.valueOf(i);
+            String name = "Worker n°" + i;
             Thread workerThread = new Thread(() -> {
                 WorkerNode workerNode = null;
                 try {

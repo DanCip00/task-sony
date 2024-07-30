@@ -8,6 +8,9 @@ import java.net.SocketException;
 import java.util.TreeMap;
 
 
+/**
+ * Runnable class that handle input messages of the master node. Automatically terminate after 2000 ms of no messages
+ */
 public class WorkerHandler implements Runnable {
     private final DatagramSocket socket;
     private final TreeMap<String, InetAddress> workerAddresses;
