@@ -1,6 +1,14 @@
-public class Message {
+import java.io.Serializable;
+
+public class Message implements Serializable {
+    private static final long serialVersionUID = 1L;
+
     public enum MessageType {
-        PING, BROADCAST, PONG, CHAIN
+        INITIALIZE, // Initial connection message
+        PING,
+        PONG,
+        BROADCAST,
+        CHAIN
     }
 
     private final MessageType type;
@@ -19,28 +27,8 @@ public class Message {
         return content;
     }
 
-    // Serialize the Message object to a string
-    public String serialize() {
-        return type.name() + ":" + content;
-    }
-
-    // Deserialize a string to a Message object
-    public static Message deserialize(String data) {
-        String[] parts = data.split(":", 2);
-        if (parts.length < 2) {
-            throw new IllegalArgumentException("Invalid message format");
-        }
-        MessageType type = MessageType.valueOf(parts[0]);
-        String content = parts[1];
-        return new Message(type, content);
-    }
-
     @Override
     public String toString() {
-        return "Message{" +
-                "type=" + type +
-                ", content='" + content + '\'' +
-                '}';
+        return "Message{type=" + type + ", content='" + content + "'}";
     }
 }
-

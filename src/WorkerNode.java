@@ -1,4 +1,4 @@
-import java.io.*;
+import java.io.IOException;
 import java.net.*;
 import java.util.UUID;
 
@@ -28,63 +28,55 @@ public class WorkerNode {
 
     public void start() {
         while (running) {
-            try (Socket socket = new Socket(masterAddress, masterPort);
-                 BufferedReader reader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-                 PrintWriter writer = new PrintWriter(socket.getOutputStream(), true)) {
+            try (DatagramSocket socket = new DatagramSocket()) {
+                InetAddress masterInetAddress = InetAddress.getByName(masterAddress);
+                byte[] buf = ("Worker " + name + " connected.").getBytes();
+                DatagramPacket packet = new DatagramPacket(buf, buf.length, masterInetAddress, masterPort);
+                socket.send(packet);
 
-                writer.println("Worker " + name + " connected.");
+                byte[] receiveBuf = new byte[256];
+                DatagramPacket receivePacket = new DatagramPacket(receiveBuf, receiveBuf.length);
 
-                // Start a new thread to handle incoming messages
-                Thread messageHandlerThread = new Thread(() -> {
-                    try {
-                        String message;
-                        while (running && (message = reader.readLine()) != null) {
-                            Message receivedMessage = Message.deserialize(message);
-                            System.out.println("Received: " + receivedMessage);
-                            handleMessage(receivedMessage, writer);
-                        }
-                    } catch (IOException e) {
-                        if (running) {
-                            System.err.println("Error reading from master: " + e.getMessage());
-                        }
-                    } finally {
-                        cleanUp();
-                    }
-                });
-
-                messageHandlerThread.start();
-                messageHandlerThread.join(); // Wait for the message handler to finish
-
+                while (running) {
+                    socket.receive(receivePacket);
+                    String message = new String(receivePacket.getData(), 0, receivePacket.getLength());
+                    System.out.println("Received: " + message);
+                    handleMessage(message, socket, receivePacket.getAddress(), receivePacket.getPort());
+                }
             } catch (IOException e) {
                 System.err.println("Connection error: " + e.getMessage());
-                // Retry mechanism with exponential backoff
                 retryConnection();
-            } catch (InterruptedException e) {
-                throw new RuntimeException(e);
             }
         }
     }
 
-    private void handleMessage(Message message, PrintWriter writer) {
-        switch (message.getType()) {
-            case PING:
-                writer.println(new Message(Message.MessageType.PING, "from " + name).serialize());
-                break;
-            case BROADCAST:
-                writer.println(new Message(Message.MessageType.BROADCAST, "Broadcast received by " + name).serialize());
-                break;
-            case CHAIN:
-                String forwardedMessage = message.getContent() + " -> " + name;
-                new Thread(() -> forwardChainMessage(forwardedMessage)).start();
-                break;
+    private void handleMessage(String message, DatagramSocket socket, InetAddress address, int port) {
+        if (message.startsWith("PING")) {
+            sendResponse("PONG from " + name, socket, address, port);
+        } else if (message.startsWith("BROADCAST")) {
+            sendResponse("Broadcast received by " + name, socket, address, port);
+        } else if (message.startsWith("CHAIN")) {
+            String forwardedMessage = message + " -> " + name;
+            forwardChainMessage(forwardedMessage);
         }
     }
 
-    private void forwardChainMessage(String messageContent) {
-        Message message = new Message(Message.MessageType.CHAIN, messageContent);
-        try (Socket socket = new Socket(masterAddress, masterPort);
-             PrintWriter writer = new PrintWriter(socket.getOutputStream(), true)) {
-            writer.println(message.serialize());
+    private void sendResponse(String response, DatagramSocket socket, InetAddress address, int port) {
+        byte[] buf = response.getBytes();
+        DatagramPacket packet = new DatagramPacket(buf, buf.length, address, port);
+        try {
+            socket.send(packet);
+        } catch (IOException e) {
+            System.err.println("Error sending response: " + e.getMessage());
+        }
+    }
+
+    private void forwardChainMessage(String message) {
+        try (DatagramSocket socket = new DatagramSocket()) {
+            InetAddress masterInetAddress = InetAddress.getByName(masterAddress);
+            byte[] buf = message.getBytes();
+            DatagramPacket packet = new DatagramPacket(buf, buf.length, masterInetAddress, masterPort);
+            socket.send(packet);
         } catch (IOException e) {
             System.err.println("Error forwarding chain message: " + e.getMessage());
         }
@@ -104,12 +96,4 @@ public class WorkerNode {
             attempt++;
         }
     }
-
-    private void cleanUp() {
-        running = false;
-        // Additional cleanup if necessary
-        System.out.println("Worker node cleanup.");
-    }
 }
-
-
