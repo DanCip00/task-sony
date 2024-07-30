@@ -6,7 +6,7 @@ import java.util.UUID;
 public class WorkerNode {
     private final InetAddress masterAddress;
     private final int masterPort;
-    private final String name = UUID.randomUUID().toString();
+    private final String name ;
     private volatile boolean running = true;
 
     public static void main(String[] args) throws IOException {
@@ -18,13 +18,14 @@ public class WorkerNode {
         String masterAddress = args[0];
         int masterPort = Integer.parseInt(args[1]);
 
-        WorkerNode workerNode = new WorkerNode(masterAddress, masterPort);
+        WorkerNode workerNode = new WorkerNode(masterAddress, masterPort, UUID.randomUUID().toString());
         workerNode.start();
     }
 
-    public WorkerNode(String masterAddress, int masterPort) throws UnknownHostException {
+    public WorkerNode(String masterAddress, int masterPort, String name) throws UnknownHostException {
         this.masterAddress = InetAddress.getByName(masterAddress);
         this.masterPort = masterPort;
+        this.name = name;
     }
 
     public void start() {
@@ -64,10 +65,10 @@ public class WorkerNode {
 
         switch (type) {
             case "PING":
-                sendResponse("PONG from " + name, socket, masterAddress, masterPort);
+                sendResponse("PONG", socket, masterAddress, masterPort);
                 break;
             case "BROADCAST":
-                sendResponse("("+name+") "+"Broadcast received: ", socket, masterAddress, masterPort);
+                sendResponse("Hi master!", socket, masterAddress, masterPort);
                 break;
             case "CHAIN":
                 handleChainMessage(json, socket, address, port);
@@ -106,6 +107,7 @@ public class WorkerNode {
     private void sendResponse(String response, DatagramSocket socket, InetAddress address, int port) {
         JSONObject json = new JSONObject();
         json.put("type", "RESPONSE");
+        json.put("name", name);
         json.put("message", response);
         byte[] buf = json.toString().getBytes();
         DatagramPacket packet = new DatagramPacket(buf, buf.length, address, port);
@@ -120,9 +122,10 @@ public class WorkerNode {
         int attempt = 0;
         while (attempt < 5 && running) {
             try {
-                Thread.sleep(1000 * (long) Math.pow(2, attempt)); // Exponential backoff
+                Thread.sleep(2000);
                 System.out.println("Retrying connection... attempt " + (attempt + 1));
-                break; // Exit loop if successful connection
+                break;
+
             } catch (InterruptedException e) {
                 Thread.currentThread().interrupt();
                 System.err.println("Retry interrupted: " + e.getMessage());

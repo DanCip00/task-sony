@@ -9,7 +9,7 @@ public class Main {
         long delayMillis = 500;
         int pingPongTimes = 10;
         int numberOfWorkers = 10;
-        String command = "CHAIN";
+        String command = "chain";
 
         // Start the MasterNode
         MasterNode masterNode = new MasterNode(delayMillis, pingPongTimes, command, masterPort);
@@ -27,10 +27,11 @@ public class Main {
         // Start WorkerNodes
         for (int i = 0; i < numberOfWorkers; i++) {
 
+            String name = "Worker n°" + String.valueOf(i);
             Thread workerThread = new Thread(() -> {
                 WorkerNode workerNode = null;
                 try {
-                    workerNode = new WorkerNode("localhost", masterPort);
+                    workerNode = new WorkerNode("localhost", masterPort, name);
                 } catch (UnknownHostException e) {
                     throw new RuntimeException(e);
                 }
