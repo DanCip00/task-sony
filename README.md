@@ -133,4 +133,22 @@ Process finished with exit code 0
 
 ```
 ## Execution instructions
-`Main.java` is the main class of the system and  
+`Main.java` is the main class of the system.
+
+**General use**
+```bash
+# java -jar task-sony.jar <master_port> <delay_ms> <n_workers> <command: ping|broadcast|chain> <n_pings>  
+```
+**Ping example**
+```bash
+java -jar task-sony.jar 12346 500 3 ping 3  
+```
+**Broadcast example**
+```bash
+java -jar task-sony.jar 12346 500 3 broadcast  
+```
+
+**Chain example**
+```bash
+java -jar task-sony.jar 12346 500 4 chain   
+```
