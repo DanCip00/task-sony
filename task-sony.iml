@@ -7,5 +7,7 @@
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
+    <orderEntry type="library" exported="" name="json4s.ast_2.11" level="project" />
+    <orderEntry type="library" exported="" name="json" level="project" />
   </component>
 </module>

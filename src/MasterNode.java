@@ -1,51 +1,64 @@
+import org.json.JSONObject;
+
 import java.io.IOException;
-import java.net.*;
+import java.net.DatagramPacket;
+import java.net.DatagramSocket;
+import java.net.InetAddress;
+import java.net.SocketException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ExecutorService;
 
 public class MasterNode {
-    private final int port = 12345;
+    private final int port;
     private final List<DatagramPacket> workerPackets = new ArrayList<>();
     private final ExecutorService executor = Executors.newCachedThreadPool();
     private final long delayMillis;
     private final int pingPongTimes;
-    private String command;
+    private final String command;
 
-    public static void main(String[] args) throws IOException, InterruptedException {
-        if (args.length < 4) {
-            System.err.println("Usage: java MasterNode <delay in milliseconds> <number of workers> <ping-pong times> <ping|broadcast|chain>");
-            System.exit(1);
-        }
-
-        long delayMillis = Long.parseLong(args[0]);
-        int numWorkers = Integer.parseInt(args[1]);
-        int pingPongTimes = Integer.parseInt(args[2]);
-        String command = args[3];
-
-        MasterNode masterNode = new MasterNode(delayMillis, pingPongTimes, command);
-        masterNode.start(numWorkers);
+    public int getPort() {
+        return port;
     }
 
-    public MasterNode(long delayMillis, int pingPongTimes, String command) {
+    public long getDelayMillis() {
+        return delayMillis;
+    }
+
+    public int getPingPongTimes() {
+        return pingPongTimes;
+    }
+
+    public String getCommand() {
+        return command;
+    }
+
+    public MasterNode(long delayMillis, int pingPongTimes, String command, int port) {
         this.delayMillis = delayMillis;
         this.pingPongTimes = pingPongTimes;
         this.command = command;
+        this.port = port;
     }
 
-    public void start(int numberOfWorkers) throws IOException, InterruptedException {
+    public void connectWorker(int numberOfWorkers) throws SocketException, IOException {
         DatagramSocket socket = new DatagramSocket(port);
         System.out.println("Master node started on port " + port);
+
 
         while (workerPackets.size() < numberOfWorkers) {
             byte[] buf = new byte[256];
             DatagramPacket packet = new DatagramPacket(buf, buf.length);
             socket.receive(packet);
+            String message = new String(packet.getData(), 0, packet.getLength());
+            System.out.println("Connection: " + message);
             workerPackets.add(packet);
-            executor.submit(new WorkerHandler(socket, packet));
         }
+        executor.submit(new WorkerHandler(socket));
+    }
 
+
+    public void start() throws InterruptedException {
         switch (this.command.toLowerCase()) {
             case "ping":
                 Thread.sleep(delayMillis);
@@ -60,93 +73,56 @@ public class MasterNode {
                 this.startChain("Chain Start");
                 break;
             default:
-                System.err.println("Invalid command.");
+                System.err.println("Invalid command. Use 'ping', 'broadcast', or 'chain'.");
                 System.exit(1);
         }
     }
 
-    private class WorkerHandler implements Runnable {
-        private final DatagramSocket socket;
-        private final DatagramPacket workerPacket;
-
-        WorkerHandler(DatagramSocket socket, DatagramPacket packet) {
-            this.socket = socket;
-            this.workerPacket = packet;
-        }
-
-        @Override
-        public void run() {
-            try {
-                byte[] buf = new byte[256];
-                DatagramPacket packet = new DatagramPacket(buf, buf.length);
-
-                while (true) {
-                    socket.receive(packet);
-                    String message = new String(packet.getData(), 0, packet.getLength());
-                    System.out.println("Received from worker: " + message);
-                    handleMessage(message, packet.getAddress(), packet.getPort());
-                }
-            } catch (IOException e) {
-                System.err.println("Error reading from worker: " + e.getMessage());
-            }
-        }
-
-        private void handleMessage(String message, InetAddress address, int port) {
-            if (message.startsWith("PING")) {
-                sendResponse("PONG from Master", address, port);
-            } else if (message.startsWith("BROADCAST")) {
-                System.out.println("Broadcast received response: " + message);
-            } else if (message.startsWith("CHAIN")) {
-                forwardChainMessage(message, address, port);
-            }
-        }
-
-        private void sendResponse(String response, InetAddress address, int port) {
-            byte[] buf = response.getBytes();
-            DatagramPacket packet = new DatagramPacket(buf, buf.length, address, port);
-            try {
-                socket.send(packet);
-            } catch (IOException e) {
-                System.err.println("Error sending response: " + e.getMessage());
-            }
-        }
-
-        private void forwardChainMessage(String message, InetAddress address, int port) {
-            for (DatagramPacket packet : workerPackets) {
-                sendResponse(message, packet.getAddress(), packet.getPort());
-            }
-        }
-    }
-
     public void sendPing() throws InterruptedException {
-        for (DatagramPacket packet : workerPackets) {
-            sendResponse("PING", packet.getAddress(), packet.getPort());
-        }
 
         for (int i = 0; i < pingPongTimes; i++) {
             Thread.sleep(delayMillis);
             for (DatagramPacket packet : workerPackets) {
-                sendResponse("PING", packet.getAddress(), packet.getPort());
-            }
 
-            Thread.sleep(delayMillis);
-            for (DatagramPacket packet : workerPackets) {
-                sendResponse("PONG from Master", packet.getAddress(), packet.getPort());
+                JSONObject json = new JSONObject();
+                json.put("type", "PING");
+                json.put("message", "Ping");
+                sendResponse(json.toString(), packet.getAddress(), packet.getPort());
             }
         }
     }
 
     public void sendBroadcast(String message) {
         for (DatagramPacket packet : workerPackets) {
-            sendResponse("BROADCAST: " + message, packet.getAddress(), packet.getPort());
+            JSONObject json = new JSONObject();
+            json.put("type", "BROADCAST");
+            json.put("message", message);
+            sendResponse(json.toString(), packet.getAddress(), packet.getPort());
         }
     }
 
     public void startChain(String initialMessage) {
         if (!workerPackets.isEmpty()) {
-            DatagramPacket firstWorkerPacket = workerPackets.get(0);
-            sendResponse("CHAIN: " + initialMessage, firstWorkerPacket.getAddress(), firstWorkerPacket.getPort());
+            DatagramPacket firstWorkerPacket = workerPackets.getFirst();
+            JSONObject json = new JSONObject();
+            json.put("type", "CHAIN");
+            json.put("message", initialMessage);
+            json.put("workers", getWorkersList());
+            json.put("index", 0);
+            sendResponse(json.toString(), firstWorkerPacket.getAddress(), firstWorkerPacket.getPort());
         }
+    }
+
+    private JSONObject getWorkersList() {
+        JSONObject workersList = new JSONObject();
+        for (int i = 0; i < workerPackets.size(); i++) {
+            DatagramPacket packet = workerPackets.get(i);
+            JSONObject workerInfo = new JSONObject();
+            workerInfo.put("address", packet.getAddress().getHostAddress());
+            workerInfo.put("port", packet.getPort());
+            workersList.put("worker" + i, workerInfo);
+        }
+        return workersList;
     }
 
     private void sendResponse(String response, InetAddress address, int port) {

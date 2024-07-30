@@ -1,9 +1,10 @@
+import org.json.JSONObject;
 import java.io.IOException;
 import java.net.*;
 import java.util.UUID;
 
 public class WorkerNode {
-    private final String masterAddress;
+    private final InetAddress masterAddress;
     private final int masterPort;
     private final String name = UUID.randomUUID().toString();
     private volatile boolean running = true;
@@ -21,26 +22,33 @@ public class WorkerNode {
         workerNode.start();
     }
 
-    public WorkerNode(String masterAddress, int masterPort) {
-        this.masterAddress = masterAddress;
+    public WorkerNode(String masterAddress, int masterPort) throws UnknownHostException {
+        this.masterAddress = InetAddress.getByName(masterAddress);
         this.masterPort = masterPort;
     }
 
     public void start() {
         while (running) {
+            // Connect
             try (DatagramSocket socket = new DatagramSocket()) {
-                InetAddress masterInetAddress = InetAddress.getByName(masterAddress);
-                byte[] buf = ("Worker " + name + " connected.").getBytes();
-                DatagramPacket packet = new DatagramPacket(buf, buf.length, masterInetAddress, masterPort);
+
+                JSONObject workerInfo = new JSONObject();
+                workerInfo.put("type", "CONNECTION");
+                workerInfo.put("name", name);
+                byte[] buf = workerInfo.toString().getBytes();
+
+                DatagramPacket packet = new DatagramPacket(buf, buf.length, masterAddress, masterPort);
                 socket.send(packet);
 
-                byte[] receiveBuf = new byte[256];
+                // Working
+
+                byte[] receiveBuf = new byte[1026];
                 DatagramPacket receivePacket = new DatagramPacket(receiveBuf, receiveBuf.length);
 
                 while (running) {
                     socket.receive(receivePacket);
                     String message = new String(receivePacket.getData(), 0, receivePacket.getLength());
-                    System.out.println("Received: " + message);
+                    System.out.println("("+name+") Received: " + message);
                     handleMessage(message, socket, receivePacket.getAddress(), receivePacket.getPort());
                 }
             } catch (IOException e) {
@@ -51,34 +59,60 @@ public class WorkerNode {
     }
 
     private void handleMessage(String message, DatagramSocket socket, InetAddress address, int port) {
-        if (message.startsWith("PING")) {
-            sendResponse("PONG from " + name, socket, address, port);
-        } else if (message.startsWith("BROADCAST")) {
-            sendResponse("Broadcast received by " + name, socket, address, port);
-        } else if (message.startsWith("CHAIN")) {
-            String forwardedMessage = message + " -> " + name;
-            forwardChainMessage(forwardedMessage);
+        JSONObject json = new JSONObject(message);
+        String type = json.getString("type");
+
+        switch (type) {
+            case "PING":
+                sendResponse("PONG from " + name, socket, masterAddress, masterPort);
+                break;
+            case "BROADCAST":
+                sendResponse("("+name+") "+"Broadcast received: ", socket, masterAddress, masterPort);
+                break;
+            case "CHAIN":
+                handleChainMessage(json, socket, address, port);
+                break;
+        }
+    }
+
+    private void handleChainMessage(JSONObject json, DatagramSocket socket, InetAddress address, int port) {
+        JSONObject workersList = json.getJSONObject("workers");
+        int index = json.getInt("index");
+
+        String message = json.getString("message") + " -> " + name;
+
+        // Forward to the next worker in the chain
+        int nextIndex = index + 1;
+        if (workersList.has("worker" + nextIndex)) {
+            JSONObject nextWorker = workersList.getJSONObject("worker" + nextIndex);
+            try (DatagramSocket newSocket = new DatagramSocket()) {
+                JSONObject newMessage = new JSONObject();
+                newMessage.put("type", "CHAIN");
+                newMessage.put("message", message);
+                newMessage.put("workers", workersList);
+                newMessage.put("index", nextIndex);
+
+                byte[] buf = newMessage.toString().getBytes();
+                DatagramPacket packet = new DatagramPacket(buf, buf.length, InetAddress.getByName(nextWorker.getString("address")), nextWorker.getInt("port"));
+                newSocket.send(packet);
+            } catch (IOException e) {
+                System.err.println("Error forwarding chain message: " + e.getMessage());
+            }
+        }else{
+            sendResponse("Chain completed: " + message, socket, masterAddress, masterPort);
         }
     }
 
     private void sendResponse(String response, DatagramSocket socket, InetAddress address, int port) {
-        byte[] buf = response.getBytes();
+        JSONObject json = new JSONObject();
+        json.put("type", "RESPONSE");
+        json.put("message", response);
+        byte[] buf = json.toString().getBytes();
         DatagramPacket packet = new DatagramPacket(buf, buf.length, address, port);
         try {
             socket.send(packet);
         } catch (IOException e) {
             System.err.println("Error sending response: " + e.getMessage());
-        }
-    }
-
-    private void forwardChainMessage(String message) {
-        try (DatagramSocket socket = new DatagramSocket()) {
-            InetAddress masterInetAddress = InetAddress.getByName(masterAddress);
-            byte[] buf = message.getBytes();
-            DatagramPacket packet = new DatagramPacket(buf, buf.length, masterInetAddress, masterPort);
-            socket.send(packet);
-        } catch (IOException e) {
-            System.err.println("Error forwarding chain message: " + e.getMessage());
         }
     }
 
