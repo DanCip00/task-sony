@@ -1,19 +1,20 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
+  <component name="ArtifactsWorkspaceSettings">
+    <artifacts-to-build>
+      <artifact name="task-sony:jar" />
+    </artifacts-to-build>
+  </component>
   <component name="AutoImportSettings">
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="931fa6eb-ea23-4131-9aaf-1b3437d006a5" name="Changes" comment="Termination function">
-      <change afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/media/chain.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/media/ping.png" afterDir="false" />
+    <list default="true" id="931fa6eb-ea23-4131-9aaf-1b3437d006a5" name="Changes" comment="readme and cleaning">
+      <change afterPath="$PROJECT_DIR$/.idea/artifacts/task_sony_jar.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/META-INF/MANIFEST.MF" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/Main.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/Main.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/MasterNode.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/MasterNode.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Message.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/WorkerHandler.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/WorkerHandler.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/WorkerNode.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/WorkerNode.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -75,7 +76,7 @@
     "node.js.selected.package.tslint": "(autodetect)",
     "nodejs_package_manager_path": "npm",
     "onboarding.tips.debug.path": "/Users/daniele/projects/task-sony/src/Main.java",
-    "project.structure.last.edited": "Modules",
+    "project.structure.last.edited": "Artifacts",
     "project.structure.proportion": "0.15",
     "project.structure.side.proportion": "0.2",
     "vue.rearranger.settings.migration": "true"
@@ -91,6 +92,7 @@
     <configuration name="Main" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
       <option name="MAIN_CLASS_NAME" value="Main" />
       <module name="task-sony" />
+      <option name="PROGRAM_PARAMETERS" value="12346 500 3 ping 3" />
       <method v="2">
         <option name="Make" enabled="true" />
       </method>
@@ -150,7 +152,7 @@
       <option name="presentableId" value="Default" />
       <updated>1722281010998</updated>
       <workItem from="1722281012007" duration="8515000" />
-      <workItem from="1722326376776" duration="15698000" />
+      <workItem from="1722326376776" duration="17454000" />
     </task>
     <task id="LOCAL-00001" summary="Init - bag close connection">
       <option name="closed" value="true" />
@@ -192,7 +194,15 @@
       <option name="project" value="LOCAL" />
       <updated>1722341198270</updated>
     </task>
-    <option name="localTasksCounter" value="6" />
+    <task id="LOCAL-00006" summary="readme and cleaning">
+      <option name="closed" value="true" />
+      <created>1722343757304</created>
+      <option name="number" value="00006" />
+      <option name="presentableId" value="LOCAL-00006" />
+      <option name="project" value="LOCAL" />
+      <updated>1722343757304</updated>
+    </task>
+    <option name="localTasksCounter" value="7" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -215,6 +225,7 @@
     <MESSAGE value="working system" />
     <MESSAGE value="Better output" />
     <MESSAGE value="Termination function" />
-    <option name="LAST_COMMIT_MESSAGE" value="Termination function" />
+    <MESSAGE value="readme and cleaning" />
+    <option name="LAST_COMMIT_MESSAGE" value="readme and cleaning" />
   </component>
 </project>

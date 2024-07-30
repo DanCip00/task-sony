@@ -132,3 +132,5 @@ Process finished with exit code 0
 └── task-sony.iml
 
 ```
+## Execution instructions
+`Main.java` is the main class of the system and  

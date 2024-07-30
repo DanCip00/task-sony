@@ -8,11 +8,19 @@ public class Main {
     public static void main(String[] args) throws InterruptedException {
 
         List<Thread> workerThreads = new ArrayList<>();
-        int masterPort = 12346;
-        long delayMillis = 500;
-        int pingPongTimes = 2;
-        int numberOfWorkers = 4;
-        String command = "chain"; // chain|ping|broadcast
+        int pingPongTimes = 0;
+        if (args.length < 4) {
+            System.err.println("Wrong number of arguments");
+        }
+
+        int masterPort = Integer.parseInt(args[0]);
+        long delayMillis = Long.parseLong(args[1]);
+        int numberOfWorkers = Integer.parseInt(args[2]);
+        String command = args[3];
+
+        if (command.equalsIgnoreCase("ping")){
+            pingPongTimes = Integer.parseInt(args[4]);
+        }
 
         System.out.println("Using values:");
         System.out.println("Master Port: " + masterPort);
@@ -20,7 +28,6 @@ public class Main {
         System.out.println("PingPong Times: " + pingPongTimes);
         System.out.println("Number of Workers: " + numberOfWorkers);
         System.out.println("Command: " + command);
-
 
         // Start the MasterNode
         MasterNode masterNode = new MasterNode(delayMillis, pingPongTimes, command, masterPort);
