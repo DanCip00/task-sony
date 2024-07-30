@@ -152,3 +152,4 @@ java -jar task-sony.jar 12346 500 3 broadcast
 ```bash
 java -jar task-sony.jar 12346 500 4 chain   
 ```
+**Note.** For high values of Workers in the **chain** increase the buffers since it's appending in the message the name of the worker
